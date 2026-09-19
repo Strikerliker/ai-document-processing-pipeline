@@ -1,134 +1,142 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
-<title id="title">AI Document Processing Pipeline – Data Flow</title>
-<desc id="desc">Data flow for an AWS document-processing pipeline from document upload through EventBridge, Step Functions, Textract extraction, Lambda processing, Bedrock enrichment, structured JSON validation, and S3 output, with failure handling and CloudWatch observability.</desc>
+<title id="title">AI Document Processing Pipeline – Data Flow Diagram</title>
+<desc id="desc">Event-driven serverless document data flow from S3 input through EventBridge, Step Functions, Textract, Lambda and Amazon Bedrock to normalized JSON output in S3, with supporting CloudWatch, IAM, Terraform, and GitHub Actions controls.</desc>
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#061a30"/><stop offset="1" stop-color="#03111f"/></linearGradient>
   <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c2945"/><stop offset="1" stop-color="#071b30"/></linearGradient>
-  <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000" flood-opacity=".26"/></filter>
+  <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="#000" flood-opacity=".28"/></filter>
   <marker id="arr" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#66c3ff"/></marker>
   <marker id="arr2" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9f7bff"/></marker>
   <style>
-    .t{font-family:Arial,Helvetica,sans-serif;fill:#f7fbff}.m{font-family:Arial,Helvetica,sans-serif;fill:#aac7dc}.h{font-weight:700}
-    .card{fill:url(#card);stroke:#2c79aa;stroke-width:1.5}.stage{fill:#09243c;stroke:#2e78a9;stroke-width:1.5}
+    .t{font-family:Arial,Helvetica,sans-serif;fill:#f7fbff}.m{font-family:Arial,Helvetica,sans-serif;fill:#abc7dc}.h{font-weight:700}
+    .panel{fill:url(#card);stroke:#2c79aa;stroke-width:1.5}.support{fill:#0a2239;stroke:#2c79aa;stroke-width:1.5}
     .line{stroke:#66c3ff;stroke-width:3.2;fill:none;marker-end:url(#arr)}.dash{stroke:#9f7bff;stroke-width:2.3;fill:none;stroke-dasharray:7 6;marker-end:url(#arr2)}
-    .tiny{font-size:11px}.small{font-size:13px}.cap{font-size:13px;letter-spacing:2px;fill:#6ec1ff}
+    .small{font-size:13px}.tiny{font-size:11px}.cap{font-size:13px;letter-spacing:2px;fill:#6ec1ff}
   </style>
 </defs>
 
 <rect width="1600" height="900" rx="22" fill="url(#bg)"/>
-<text x="800" y="52" text-anchor="middle" class="t h" font-size="40">AI Document Processing Pipeline – Data Flow</text>
-<text x="800" y="85" text-anchor="middle" class="m" font-size="18">How an uploaded document becomes validated, structured AI output</text>
+<text x="800" y="52" text-anchor="middle" class="t h" font-size="40">AI Document Processing Pipeline – Data Flow Diagram</text>
+<text x="800" y="86" text-anchor="middle" class="m" font-size="18">Event-driven serverless flow for OCR, AI enrichment, and structured output</text>
 
-<!-- Source -->
-<g transform="translate(45 180)">
-  <rect width="190" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="42" cy="40" r="20" fill="#2f80ed"/><text x="42" y="47" text-anchor="middle" class="t h" font-size="18">1</text>
-  <rect x="59" y="82" width="72" height="72" rx="12" fill="#7AA116"/>
-  <ellipse cx="95" cy="102" rx="20" ry="7" fill="none" stroke="#fff" stroke-width="3"/><path d="M75 102v35c0 10 40 10 40 0v-35" fill="none" stroke="#fff" stroke-width="3"/>
-  <text x="95" y="188" text-anchor="middle" class="t h" font-size="18">S3 Input</text>
-  <text x="95" y="217" text-anchor="middle" class="m small">PDF / image upload</text>
-  <text x="95" y="239" text-anchor="middle" class="m small">Encrypted + versioned</text>
-  <text x="95" y="261" text-anchor="middle" class="m small">Public access blocked</text>
+<!-- Main flow -->
+<g transform="translate(30 155)">
+  <rect width="1540" height="465" rx="18" fill="#08223b" stroke="#1f91d0" stroke-width="2"/>
+  <text x="25" y="34" class="cap">DOCUMENT DATA FLOW</text>
+
+  <!-- 1 S3 -->
+  <g transform="translate(20 60)">
+    <rect width="165" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#2ed08a"/>
+    <circle cx="82" cy="-2" r="20" fill="#062039" stroke="#2ed08a" stroke-width="3"/><text x="82" y="5" text-anchor="middle" class="t h" font-size="18">1</text>
+    <rect x="50" y="32" width="64" height="64" rx="10" fill="#7AA116"/>
+    <ellipse cx="82" cy="51" rx="19" ry="7" fill="none" stroke="#fff" stroke-width="3"/><path d="M63 51v32c0 9 38 9 38 0V51" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="82" y="130" text-anchor="middle" class="t h" font-size="19">Amazon S3</text><text x="82" y="153" text-anchor="middle" class="t h" font-size="19">Input</text>
+    <text x="82" y="190" text-anchor="middle" class="m small">Uploaded PDFs</text><text x="82" y="210" text-anchor="middle" class="m small">and images</text><text x="82" y="230" text-anchor="middle" class="m small">encrypted + versioned</text>
+  </g>
+
+  <!-- 2 EventBridge -->
+  <g transform="translate(245 60)">
+    <rect width="165" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#bb63d8"/>
+    <circle cx="82" cy="-2" r="20" fill="#23163f" stroke="#d267f2" stroke-width="3"/><text x="82" y="5" text-anchor="middle" class="t h" font-size="18">2</text>
+    <rect x="50" y="32" width="64" height="64" rx="10" fill="#D82B78"/>
+    <circle cx="82" cy="64" r="8" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="62" cy="47" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="102" cy="47" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="62" cy="81" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="102" cy="81" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M68 51l9 8M96 51l-9 8M68 77l9-8M96 77l-9-8" stroke="#fff" stroke-width="2"/>
+    <text x="82" y="130" text-anchor="middle" class="t h" font-size="18">Amazon</text><text x="82" y="153" text-anchor="middle" class="t h" font-size="18">EventBridge</text>
+    <text x="82" y="190" text-anchor="middle" class="m small">Object-created event</text><text x="82" y="210" text-anchor="middle" class="m small">triggers processing</text>
+  </g>
+
+  <!-- 3 SFN -->
+  <g transform="translate(470 60)">
+    <rect width="175" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#bb63d8"/>
+    <circle cx="87" cy="-2" r="20" fill="#23163f" stroke="#d267f2" stroke-width="3"/><text x="87" y="5" text-anchor="middle" class="t h" font-size="18">3</text>
+    <rect x="55" y="32" width="64" height="64" rx="10" fill="#D82B78"/>
+    <rect x="67" y="45" width="17" height="12" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="91" y="45" width="17" height="12" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="79" y="69" width="18" height="12" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M75 57v7h13M100 57v7H88" stroke="#fff" stroke-width="2"/>
+    <text x="87" y="130" text-anchor="middle" class="t h" font-size="18">AWS Step</text><text x="87" y="153" text-anchor="middle" class="t h" font-size="18">Functions</text>
+    <text x="87" y="190" text-anchor="middle" class="m small">Starts workflow</text><text x="87" y="210" text-anchor="middle" class="m small">waits + polls</text><text x="87" y="230" text-anchor="middle" class="m small">handles failure states</text>
+  </g>
+
+  <!-- 4 Textract -->
+  <g transform="translate(705 60)">
+    <rect width="165" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#29d4db"/>
+    <circle cx="82" cy="-2" r="20" fill="#08343e" stroke="#32dce5" stroke-width="3"/><text x="82" y="5" text-anchor="middle" class="t h" font-size="18">4</text>
+    <rect x="50" y="32" width="64" height="64" rx="10" fill="#00A9A5"/>
+    <path d="M66 45h24l10 10v27H66zM90 45v10h10M72 65h20M72 72h20" fill="none" stroke="#fff" stroke-width="2.3"/><circle cx="80" cy="65" r="14" fill="none" stroke="#fff" stroke-width="2"/>
+    <text x="82" y="130" text-anchor="middle" class="t h" font-size="18">Amazon</text><text x="82" y="153" text-anchor="middle" class="t h" font-size="18">Textract</text>
+    <text x="82" y="190" text-anchor="middle" class="m small">Asynchronous OCR</text><text x="82" y="210" text-anchor="middle" class="m small">text extraction</text>
+  </g>
+
+  <!-- 5 Lambda -->
+  <g transform="translate(930 60)">
+    <rect width="165" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#ff9a2e"/>
+    <circle cx="82" cy="-2" r="20" fill="#3a250a" stroke="#ff9a2e" stroke-width="3"/><text x="82" y="5" text-anchor="middle" class="t h" font-size="18">5</text>
+    <rect x="50" y="32" width="64" height="64" rx="10" fill="#FF9900"/>
+    <path d="M66 45h14l11 37H80l-6-18-7 18H56l13-28z" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="82" y="130" text-anchor="middle" class="t h" font-size="18">AWS Lambda</text>
+    <text x="82" y="178" text-anchor="middle" class="m small">Combines extracted text</text><text x="82" y="198" text-anchor="middle" class="m small">builds grounded prompt</text><text x="82" y="218" text-anchor="middle" class="m small">normalizes output</text>
+  </g>
+
+  <!-- 6 Bedrock -->
+  <g transform="translate(1155 60)">
+    <rect width="165" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#3bb5ff"/>
+    <circle cx="82" cy="-2" r="20" fill="#062039" stroke="#3bb5ff" stroke-width="3"/><text x="82" y="5" text-anchor="middle" class="t h" font-size="18">6</text>
+    <rect x="50" y="32" width="64" height="64" rx="10" fill="#00A9A5"/>
+    <path d="M82 44c-9 0-15 7-15 16 0 5 3 10 7 13v10M82 44c9 0 15 7 15 16 0 5-3 10-7 13v10M74 58h16M74 66h16M82 44v39" fill="none" stroke="#fff" stroke-width="2.3"/>
+    <text x="82" y="130" text-anchor="middle" class="t h" font-size="18">Amazon</text><text x="82" y="153" text-anchor="middle" class="t h" font-size="18">Bedrock</text>
+    <text x="82" y="190" text-anchor="middle" class="m small">Classify document</text><text x="82" y="210" text-anchor="middle" class="m small">summarize + actions</text><text x="82" y="230" text-anchor="middle" class="m small">confidence score</text>
+  </g>
+
+  <!-- 7 S3 output -->
+  <g transform="translate(1380 60)">
+    <rect width="140" height="320" rx="14" class="panel" filter="url(#sh)" style="stroke:#2ed08a"/>
+    <circle cx="70" cy="-2" r="20" fill="#062039" stroke="#2ed08a" stroke-width="3"/><text x="70" y="5" text-anchor="middle" class="t h" font-size="18">7</text>
+    <rect x="38" y="32" width="64" height="64" rx="10" fill="#7AA116"/>
+    <ellipse cx="70" cy="51" rx="19" ry="7" fill="none" stroke="#fff" stroke-width="3"/><path d="M51 51v32c0 9 38 9 38 0V51" fill="none" stroke="#fff" stroke-width="3"/>
+    <text x="70" y="130" text-anchor="middle" class="t h" font-size="18">Amazon S3</text><text x="70" y="153" text-anchor="middle" class="t h" font-size="18">Output</text>
+    <text x="70" y="190" text-anchor="middle" class="m small">Normalized JSON</text><text x="70" y="210" text-anchor="middle" class="m small">processed/</text>
+  </g>
+
+  <!-- arrows -->
+  <path d="M185 220H245" class="line"/><text x="215" y="200" text-anchor="middle" class="m tiny">upload</text>
+  <path d="M410 220H470" class="line"/><text x="440" y="200" text-anchor="middle" class="m tiny">object event</text>
+  <path d="M645 220H705" class="line"/><text x="675" y="200" text-anchor="middle" class="m tiny">start</text>
+  <path d="M870 220H930" class="line"/><text x="900" y="200" text-anchor="middle" class="m tiny">text</text>
+  <path d="M1095 220H1155" class="line"/><text x="1125" y="200" text-anchor="middle" class="m tiny">validated prompt</text>
+  <path d="M1320 220H1380" class="line"/><text x="1350" y="200" text-anchor="middle" class="m tiny">JSON</text>
+
+  <!-- feedback loop -->
+  <path d="M1012 380V420H557V380" class="dash"/>
+  <text x="785" y="442" text-anchor="middle" class="m small">Textract job complete → return extracted text for processing</text>
 </g>
 
-<!-- Route -->
-<g transform="translate(285 180)">
-  <rect width="190" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="42" cy="40" r="20" fill="#2f80ed"/><text x="42" y="47" text-anchor="middle" class="t h" font-size="18">2</text>
-  <rect x="59" y="82" width="72" height="72" rx="12" fill="#D82B78"/>
-  <circle cx="95" cy="118" r="8" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="73" cy="100" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="117" cy="100" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="73" cy="137" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="117" cy="137" r="5" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M79 104l10 9M111 104l-10 9M79 133l10-9M111 133l-10-9" stroke="#fff" stroke-width="2"/>
-  <text x="95" y="188" text-anchor="middle" class="t h" font-size="18">EventBridge</text>
-  <text x="95" y="217" text-anchor="middle" class="m small">Object-created event</text>
-  <text x="95" y="239" text-anchor="middle" class="m small">Routes document key</text>
-  <text x="95" y="261" text-anchor="middle" class="m small">Starts state machine</text>
+<!-- supporting controls -->
+<rect x="30" y="645" width="1540" height="185" rx="18" fill="#08223b" stroke="#1f91d0" stroke-width="2"/>
+<text x="55" y="677" class="cap">SUPPORTING CONTROLS</text>
+
+<g transform="translate(55 705)">
+  <rect width="330" height="95" rx="12" class="support"/>
+  <rect x="20" y="17" width="60" height="60" rx="9" fill="#D82B78"/>
+  <path d="M32 56c0-11 14-16 22-8 5-12 22-6 23 6 8 2 8 17-2 17H39c-8 0-11-10-7-15z" fill="none" stroke="#fff" stroke-width="2.3"/><circle cx="68" cy="65" r="8" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M74 71l7 7" stroke="#fff" stroke-width="2.2"/>
+  <text x="100" y="42" class="t h" font-size="15">Amazon CloudWatch</text><text x="100" y="64" class="m small">Logs, metrics, alarms</text>
 </g>
 
-<!-- Orchestration -->
-<g transform="translate(525 180)">
-  <rect width="200" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="42" cy="40" r="20" fill="#2f80ed"/><text x="42" y="47" text-anchor="middle" class="t h" font-size="18">3</text>
-  <rect x="65" y="82" width="72" height="72" rx="12" fill="#D82B78"/>
-  <rect x="78" y="96" width="18" height="13" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="105" y="96" width="18" height="13" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><rect x="91" y="123" width="20" height="13" rx="2" fill="none" stroke="#fff" stroke-width="2.4"/><path d="M87 109v8h14M114 109v8h-13" stroke="#fff" stroke-width="2"/>
-  <text x="100" y="188" text-anchor="middle" class="t h" font-size="18">Step Functions</text>
-  <text x="100" y="217" text-anchor="middle" class="m small">Starts extraction job</text>
-  <text x="100" y="239" text-anchor="middle" class="m small">Waits + polls status</text>
-  <text x="100" y="261" text-anchor="middle" class="m small">Stops on failure</text>
+<g transform="translate(410 705)">
+  <rect width="330" height="95" rx="12" class="support"/>
+  <rect x="20" y="17" width="60" height="60" rx="9" fill="#DD344C"/>
+  <path d="M35 50h24v20H35zM39 50V40c0-10 16-10 16 0v10" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M63 42h10M63 50h10M63 58h10" stroke="#fff" stroke-width="2"/>
+  <text x="100" y="42" class="t h" font-size="15">AWS IAM</text><text x="100" y="64" class="m small">Least-privilege service roles</text>
 </g>
 
-<!-- Extraction -->
-<g transform="translate(775 180)">
-  <rect width="190" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="42" cy="40" r="20" fill="#2f80ed"/><text x="42" y="47" text-anchor="middle" class="t h" font-size="18">4</text>
-  <rect x="59" y="82" width="72" height="72" rx="12" fill="#00A9A5"/>
-  <path d="M76 96h27l10 10v34H76zM103 96v11h10M82 118h24M82 126h24M82 134h14" fill="none" stroke="#fff" stroke-width="2.3"/><circle cx="92" cy="122" r="15" fill="none" stroke="#fff" stroke-width="2"/>
-  <text x="95" y="188" text-anchor="middle" class="t h" font-size="18">Amazon Textract</text>
-  <text x="95" y="217" text-anchor="middle" class="m small">OCR / text detection</text>
-  <text x="95" y="239" text-anchor="middle" class="m small">Multi-page extraction</text>
-  <text x="95" y="261" text-anchor="middle" class="m small">Returns text blocks</text>
+<g transform="translate(765 705)">
+  <rect width="330" height="95" rx="12" class="support"/>
+  <rect x="20" y="17" width="60" height="60" rx="9" fill="#6544C6"/>
+  <path d="M35 32l15 7v17l-15-7zm17 8l15 7v17l-15-7zm0-16l15 7v15l-15-7z" fill="none" stroke="#fff" stroke-width="2.2"/>
+  <text x="100" y="42" class="t h" font-size="15">Terraform</text><text x="100" y="64" class="m small">Infrastructure as Code</text>
 </g>
 
-<!-- Lambda -->
-<g transform="translate(1015 180)">
-  <rect width="190" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="42" cy="40" r="20" fill="#2f80ed"/><text x="42" y="47" text-anchor="middle" class="t h" font-size="18">5</text>
-  <rect x="59" y="82" width="72" height="72" rx="12" fill="#FF9900"/>
-  <path d="M76 96h15l12 39H91l-6-19-7 19H66l13-29z" fill="none" stroke="#fff" stroke-width="3"/>
-  <text x="95" y="188" text-anchor="middle" class="t h" font-size="18">AWS Lambda</text>
-  <text x="95" y="217" text-anchor="middle" class="m small">Combines extracted text</text>
-  <text x="95" y="239" text-anchor="middle" class="m small">Builds grounded prompt</text>
-  <text x="95" y="261" text-anchor="middle" class="m small">Normalizes AI output</text>
+<g transform="translate(1120 705)">
+  <rect width="425" height="95" rx="12" class="support"/>
+  <circle cx="55" cy="47" r="28" fill="#151515"/><path d="M42 53c-4-13 4-22 13-22 11 0 18 9 15 22-3 9-8 13-15 13-6 0-11-4-13-13z" fill="#fff"/>
+  <text x="100" y="42" class="t h" font-size="15">GitHub Actions</text><text x="100" y="64" class="m small">Tests, linting, Terraform validation</text>
 </g>
 
-<!-- Bedrock -->
-<g transform="translate(1255 180)">
-  <rect width="190" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="42" cy="40" r="20" fill="#2f80ed"/><text x="42" y="47" text-anchor="middle" class="t h" font-size="18">6</text>
-  <rect x="59" y="82" width="72" height="72" rx="12" fill="#00A9A5"/>
-  <path d="M95 94c-10 0-17 8-17 18 0 6 3 11 8 14v12M95 94c10 0 17 8 17 18 0 6-3 11-8 14v12M86 110h18M86 119h18M95 94v44" fill="none" stroke="#fff" stroke-width="2.3"/>
-  <text x="95" y="188" text-anchor="middle" class="t h" font-size="18">Amazon Bedrock</text>
-  <text x="95" y="217" text-anchor="middle" class="m small">Classifies document</text>
-  <text x="95" y="239" text-anchor="middle" class="m small">Creates summary + actions</text>
-  <text x="95" y="261" text-anchor="middle" class="m small">Returns confidence</text>
-</g>
-
-<!-- Output -->
-<g transform="translate(1470 180)">
-  <rect width="100" height="330" rx="16" class="card" filter="url(#sh)"/>
-  <circle cx="30" cy="40" r="20" fill="#2f80ed"/><text x="30" y="47" text-anchor="middle" class="t h" font-size="18">7</text>
-  <rect x="20" y="82" width="60" height="72" rx="12" fill="#7AA116"/>
-  <ellipse cx="50" cy="102" rx="18" ry="6" fill="none" stroke="#fff" stroke-width="2.7"/><path d="M32 102v35c0 9 36 9 36 0v-35" fill="none" stroke="#fff" stroke-width="2.7"/>
-  <text x="50" y="188" text-anchor="middle" class="t h" font-size="15">S3 Output</text>
-  <text x="50" y="217" text-anchor="middle" class="m tiny">Structured</text><text x="50" y="234" text-anchor="middle" class="m tiny">JSON</text><text x="50" y="251" text-anchor="middle" class="m tiny">processed/</text>
-</g>
-
-<!-- Main data arrows -->
-<path d="M235 345H285" class="line"/><text x="260" y="326" text-anchor="middle" class="m tiny">event</text>
-<path d="M475 345H525" class="line"/>
-<path d="M725 345H775" class="line"/>
-<path d="M965 345H1015" class="line"/>
-<path d="M1205 345H1255" class="line"/>
-<path d="M1445 345H1470" class="line"/>
-
-<!-- orchestration loop -->
-<path d="M625 180V145H870V180" class="dash"/>
-<text x="748" y="137" text-anchor="middle" class="m tiny">start extraction job</text>
-<path d="M870 510V545H625V510" class="dash"/>
-<text x="748" y="563" text-anchor="middle" class="m tiny">status + extracted text pages</text>
-
-<!-- structured output detail -->
-<rect x="180" y="610" width="1240" height="120" rx="16" class="stage"/>
-<text x="800" y="642" text-anchor="middle" class="cap">NORMALIZED OUTPUT PAYLOAD</text>
-<text x="290" y="683" class="t h" font-size="15">document_type</text>
-<text x="510" y="683" class="t h" font-size="15">summary</text>
-<text x="710" y="683" class="t h" font-size="15">action_items[]</text>
-<text x="950" y="683" class="t h" font-size="15">confidence</text>
-<text x="1160" y="683" class="t h" font-size="15">source metadata</text>
-<text x="800" y="713" text-anchor="middle" class="m small">Lambda validates and normalizes model output before writing JSON to the output bucket.</text>
-
-<!-- failure / observability -->
-<rect x="180" y="760" width="1240" height="85" rx="16" class="stage"/>
-<text x="230" y="793" class="cap">FAILURE &amp; OBSERVABILITY</text>
-<text x="230" y="822" class="m small">Textract failure stops the workflow before AI processing • Step Functions and Lambda emit execution logs • CloudWatch provides operational visibility.</text>
-<path d="M625 510V760" class="dash"/>
-<path d="M1110 510V760" class="dash"/>
+<text x="1570" y="875" text-anchor="end" class="cap">BUILD • PROCESS • UNDERSTAND • WITH AWS</text>
 </svg>
