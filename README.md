@@ -19,6 +19,8 @@ A serverless AWS portfolio project for extracting text from uploaded documents, 
 
 ## Architecture
 
+![AI Document Processing Pipeline AWS architecture](docs/ai-document-processing-aws-architecture.svg)
+
 ```mermaid
 flowchart LR
     A[Document Upload] --> B[S3 Input Bucket]
